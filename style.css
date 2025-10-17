@@ -1,0 +1,78 @@
+/* --- Futuristic Golden Background --- */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Orbitron', sans-serif;
+  background: radial-gradient(circle at top, #1a1a1a, #3d3d3d, #222222);
+  color: #ffd700; /* Golden text */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+}
+
+h1 {
+  margin-top: 20px;
+  text-shadow: 0 0 10px #ffd700, 0 0 20px #ffec8b;
+}
+
+.container {
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid #ffd700;
+  border-radius: 15px;
+  padding: 30px;
+  margin-top: 30px;
+  text-align: center;
+  box-shadow: 0 0 20px #ffd700;
+  width: 350px;
+}
+
+button {
+  background: linear-gradient(90deg, #ffd700, #ffec8b);
+  border: none;
+  padding: 12px 25px;
+  margin: 10px;
+  border-radius: 8px;
+  color: #000;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 10px #ffd700, 0 0 20px #ffec8b;
+}
+
+button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px #ffd700, 0 0 40px #ffec8b;
+}
+
+.info {
+  margin: 15px 0;
+  font-size: 14px;
+  color: #ffd700;
+  text-shadow: 0 0 5px #ffd700;
+}
+
+.winner {
+  margin-top: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 0 0 10px #ffd700, 0 0 20px #ffec8b;
+}
+
+input[type="text"] {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 6px;
+  border: 1px solid #ffd700;
+  background: rgba(0,0,0,0.3);
+  color: #ffd700;
+  text-align: center;
+  font-size: 14px;
+}
+
+input::placeholder {
+  color: #ffd700;
+  opacity: 0.7;
+}

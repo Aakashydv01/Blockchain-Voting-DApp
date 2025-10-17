@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🚀 Futuristic Voting DApp</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d0d0d;
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+    h2 {
+      color: #00d4ff;
+      margin-bottom: 10px;
+    }
+    button {
+      background: #00d4ff;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #00ffaa;
+    }
+    input {
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      margin: 5px;
+    }
+    #status {
+      margin-top: 10px;
+      color: #aaa;
+    }
+    .box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px auto;
+      width: 350px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🚀 Futuristic Voting DApp</h2>
+  <p id="account">Not Connected</p>
+  <button id="connectWallet">Connect Wallet</button>
+  <p id="status"></p>
+
+  <div class="box">
+    <h3>Add Candidate</h3>
+    <input type="text" id="candidateName" placeholder="Candidate name" />
+    <button id="addCandidate">Add Candidate</button>
+  </div>
+
+  <div class="box">
+    <h3>Vote for Candidate</h3>
+    <input type="number" id="candidateIndex" placeholder="Candidate index (0,1,2...)" />
+    <button id="vote">Vote</button>
+  </div>
+
+  <div class="box">
+    <h3>Get Winner</h3>
+    <button id="getWinner">Check Winner</button>
+    <p id="winner">Winner: Not declared</p>
+  </div>
+
+  <div class="box">
+    <h3>Candidate List</h3>
+    <button id="getCandidates">Show All</button>
+    <div id="candidateList"></div>
+  </div>
+
+  <script>
+    const connectWalletButton = document.getElementById('connectWallet');
+    const accountDisplay = document.getElementById('account');
+    const statusDisplay = document.getElementById('status');
+
+    let provider, signer, contract;
+
+    // 🚨 Replace these with your deployed contract details
+    const contractAddress = "0xF9Bf4A955586B07340761f4688d0C0482ae61125"; // your address
+    const contractABI = [
+      {
+        "inputs":[{"internalType":"string","name":"name","type":"string"}],
+        "name":"addCandidate","outputs":[],"stateMutability":"nonpayable","type":"function"
+      },
+      {
+        "inputs":[{"internalType":"uint256","name":"candidateIndex","type":"uint256"}],
+        "name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"
+      },
+      {
+        "inputs":[],"name":"getWinner","outputs":[{"internalType":"string","name":"","type":"string"}],
+        "stateMutability":"view","type":"function"
+      },
+      {
+        "inputs":[],"name":"getCandidates","outputs":[{"internalType":"string[]","name":"","type":"string[]"}],
+        "stateMutability":"view","type":"function"
+      }
+    ];
+
+    // ✅ Connect wallet
+    async function connectWallet() {
+      if (typeof window.ethereum !== "undefined") {
+        try {
+          const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+          const account = accounts[0];
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          signer = provider.getSigner();
+          contract = new ethers.Contract(contractAddress, contractABI, signer);
+          accountDisplay.textContent = "Connected Account: " + account;
+          statusDisplay.textContent = "Wallet connected successfully ✅";
+        } catch (err) {
+          console.error(err);
+          statusDisplay.textContent = "Connection failed ❌";
+        }
+      } else {
+        alert("MetaMask not found! Please install it from metamask.io");
+      }
+    }
+
+    // ✅ Add candidate
+    async function addCandidate() {
+      const name = document.getElementById("candidateName").value;
+      if (!name) return alert("Enter candidate name");
+      try {
+        const tx = await contract.addCandidate(name);
+        await tx.wait();
+        statusDisplay.textContent = "Candidate added successfully ✅";
+      } catch (err) {
+        console.error(err);
+        statusDisplay.textContent = "Error adding candidate ❌";
+      }
+    }
+
+    // ✅ Vote
+    async function vote() {
+      const index = document.getElementById("candidateIndex").value;
+      if (index === "") return alert("Enter candidate index");
+      try {
+        const tx = await contract.vote(index);
+        await tx.wait();
+        statusDisplay.textContent = "Vote submitted successfully ✅";
+      } catch (err) {
+        console.error(err);
+        statusDisplay.textContent = "Error voting ❌";
+      }
+    }
+
+    // ✅ Get winner
+    async function getWinner() {
+      try {
+        const winner = await contract.getWinner();
+        document.getElementById("winner").textContent = "Winner: " + winner;
+      } catch (err) {
+        console.error(err);
+        statusDisplay.textContent = "Error getting winner ❌";
+      }
+    }
+
+    // ✅ Get all candidates
+    async function getCandidates() {
+      try {
+        const names = await contract.getCandidates();
+        document.getElementById("candidateList").innerHTML =
+          names.map((n, i) => `<p>${i}: ${n}</p>`).join("");
+      } catch (err) {
+        console.error(err);
+        statusDisplay.textContent = "Error fetching candidates ❌";
+      }
+    }
+
+    connectWalletButton.addEventListener("click", connectWallet);
+    document.getElementById("addCandidate").addEventListener("click", addCandidate);
+    document.getElementById("vote").addEventListener("click", vote);
+    document.getElementById("getWinner").addEventListener("click", getWinner);
+    document.getElementById("getCandidates").addEventListener("click", getCandidates);
+  </script>
+</body>
+</html>
